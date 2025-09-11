@@ -42,6 +42,9 @@ app.use("/events", eventRouter);
 app.use("/articles", articleRouter);
 app.use("/admins", adminRouter);
 app.use("/contact", contactRouter);
+app.get("/", (req, res) => {
+  res.send("Welcome to the API");
+});
 
 // 404 + error handling
 app.use(notFound);
