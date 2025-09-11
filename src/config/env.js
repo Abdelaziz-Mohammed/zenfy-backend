@@ -11,11 +11,21 @@ const required = (name, val) => {
   return val;
 };
 
+const NODE_ENV = process.env.NODE_ENV || "development";
+
+// Auto-set CORS_ORIGIN based on environment
+let CORS_ORIGIN;
+if (NODE_ENV === "production") {
+  CORS_ORIGIN = process.env.FRONTEND_URL; // your deployed frontend
+} else {
+  CORS_ORIGIN = "http://localhost:3000"; // dev frontend
+}
+
 module.exports = {
   // Basic
-  NODE_ENV: process.env.NODE_ENV || "development",
+  NODE_ENV,
   PORT: parseInt(process.env.PORT || "4000", 10),
-  CORS_ORIGIN: required("CORS_ORIGIN", process.env.CORS_ORIGIN),
+  CORS_ORIGIN,
   FRONTEND_URL: required("FRONTEND_URL", process.env.FRONTEND_URL),
   MONGODB_URI: required("MONGODB_URI", process.env.MONGODB_URI),
   JWT_SECRET: required("JWT_SECRET", process.env.JWT_SECRET),
