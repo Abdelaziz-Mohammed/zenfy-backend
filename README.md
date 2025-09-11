@@ -2,13 +2,13 @@
 
 ```
 server/
-├── server.js
-├── app.js
 ├── package.json
 ├── package-lock.json
 ├── .env
 ├── .gitignore
 └── src/
+    ├── server.js
+    ├── app.js
     ├── controllers/
     │   ├── admin.controller.js
     │   ├── article.controller.js

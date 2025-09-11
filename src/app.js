@@ -36,12 +36,12 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // Routes
-app.use("/api", healthRouter);
-app.use("/api/auth", authRouter);
-app.use("/api/events", eventRouter);
-app.use("/api/articles", articleRouter);
-app.use("/api/admins", adminRouter);
-app.use("/api/contact", contactRouter);
+app.use("/health", healthRouter);
+app.use("/auth", authRouter);
+app.use("/events", eventRouter);
+app.use("/articles", articleRouter);
+app.use("/admins", adminRouter);
+app.use("/contact", contactRouter);
 
 // 404 + error handling
 app.use(notFound);
