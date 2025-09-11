@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const slugify = require("slugify");
 
 const articleSchema = new mongoose.Schema(
   {
@@ -30,5 +31,13 @@ const articleSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Pre-save hook to auto-generate slug from title
+articleSchema.pre("validate", function (next) {
+  if (this.title && !this.slug) {
+    this.slug = slugify(this.title, { lower: true, strict: true });
+  }
+  next();
+});
 
 module.exports = mongoose.model("Article", articleSchema);

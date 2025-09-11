@@ -2,6 +2,7 @@ const express = require("express");
 const {
   getPublishedArticles,
   getPublishedArticleById,
+  getAllArticles,
   createArticle,
   updateArticle,
   deleteArticle,
@@ -9,6 +10,7 @@ const {
   unpublishArticle,
 } = require("../controllers/article.controller");
 const { adminMiddleware } = require("../middlewares/admin.middleware");
+const { upload } = require("./../config/cloudinary");
 
 const articleRouter = express.Router();
 
@@ -17,8 +19,9 @@ articleRouter.get("/", getPublishedArticles);
 articleRouter.get("/:id", getPublishedArticleById);
 
 // Admin only
-articleRouter.post("/", adminMiddleware, createArticle);
-articleRouter.put("/:id", adminMiddleware, updateArticle);
+articleRouter.get("/admin/all", adminMiddleware, getAllArticles);
+articleRouter.post("/", adminMiddleware, upload.single("image"), createArticle);
+articleRouter.put("/:id", adminMiddleware, upload.single("image"), updateArticle);
 articleRouter.delete("/:id", adminMiddleware, deleteArticle);
 articleRouter.patch("/:id/publish", adminMiddleware, publishArticle);
 articleRouter.patch("/:id/unpublish", adminMiddleware, unpublishArticle);

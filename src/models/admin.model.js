@@ -33,6 +33,24 @@ const adminSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+      default: null,
+    },
+    isPending: {
+      type: Boolean,
+      default: true, // new admins must be approved by a super_admin
+    },
+    // TTL (time to live) index to auto-remove unverified admins after 24 hours
+    verificationExpiresAt: {
+      type: Date,
+      default: () => new Date(Date.now() + 24 * 60 * 60 * 1000), // 24h from creation
+      index: { expires: "0s" },
+    },
   },
   { timestamps: true }
 );

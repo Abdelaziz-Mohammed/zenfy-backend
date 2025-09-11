@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const slugify = require("slugify");
 
 const eventSchema = new mongoose.Schema(
   {
@@ -34,10 +35,6 @@ const eventSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    price: {
-      type: Number,
-      default: 0,
-    },
     offer: {
       type: String,
     },
@@ -51,5 +48,13 @@ const eventSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Pre-save hook to auto-generate slug from title
+eventSchema.pre("validate", function (next) {
+  if (this.title && !this.slug) {
+    this.slug = slugify(this.title, { lower: true, strict: true });
+  }
+  next();
+});
 
 module.exports = mongoose.model("Event", eventSchema);
