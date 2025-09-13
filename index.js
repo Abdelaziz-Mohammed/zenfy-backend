@@ -45,6 +45,9 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
+// trust first proxy
+app.set("trust proxy", 1);
+
 // ---------- Routes ----------
 app.use("/api/health", healthRouter);
 app.use("/api/auth", authRouter);
