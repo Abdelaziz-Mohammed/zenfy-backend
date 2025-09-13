@@ -25,18 +25,26 @@ const sendContactMessage = async (req, res) => {
       });
     }
 
-    // send email to admin
-    await sendEmailService({
-      to: EMAIL_USER,
-      subject: "New Message from zenfy.net",
-      html: `
+    try {
+      await sendEmailService({
+        to: EMAIL_USER,
+        subject: "New Message from zenfy.net",
+        html: `
         <h1>New Contact Message</h1>
         <p><strong>First Name:</strong> ${first_name}</p>
         <p><strong>Last Name:</strong> ${last_name}</p>
         <p><strong>Email:</strong> ${email}</p>
         <p><strong>Message:</strong> ${message}</p>
       `,
-    });
+      });
+    } catch (emailError) {
+      console.error("Error sending contact email: ", emailError.message);
+      return res.status(500).json({
+        success: false,
+        message: "Error sending contact email",
+        error: emailError.message,
+      });
+    }
 
     return res.status(200).json({
       success: true,

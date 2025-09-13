@@ -97,16 +97,24 @@ const register = async (req, res) => {
       email
     )}`;
 
-    await sendEmailService({
-      to: email,
-      subject: "Verify Your Email Address",
-      html: `
+    try {
+      await sendEmailService({
+        to: email,
+        subject: "Verify Your Email Address",
+        html: `
         <h1>Email Verification</h1>
-        <p>Hello ${name}, please verify your email to continue:</p>
+        <p>Hello ${name}, please verify your email by clicking the following link:</p>
         <a href="${verificationLink}">Verify Email</a>
         <p><b>Note:</b> The link works only once</p>
       `,
-    });
+      });
+    } catch (emailError) {
+      console.error("Error sending verification email: ", emailError.message);
+      return res.status(500).json({
+        message: "Error sending verification email",
+        error: emailError.message,
+      });
+    }
 
     res.status(201).json({
       message: "Registration successful. Please check your email to verify your account.",
