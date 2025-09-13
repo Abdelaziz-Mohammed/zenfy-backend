@@ -24,7 +24,7 @@ app.use(
   cors({
     origin: NODE_ENV === "production" ? FRONTEND_URL : "http://localhost:3000",
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
