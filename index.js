@@ -46,12 +46,12 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // ---------- Routes ----------
-app.use("/health", healthRouter);
-app.use("/auth", authRouter);
-app.use("/events", eventRouter);
-app.use("/articles", articleRouter);
-app.use("/admins", adminRouter);
-app.use("/contact", contactRouter);
+app.use("/api/health", healthRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/events", eventRouter);
+app.use("/api/articles", articleRouter);
+app.use("/api/admins", adminRouter);
+app.use("/api/contact", contactRouter);
 
 // Root route
 app.get("/", (req, res) => {
