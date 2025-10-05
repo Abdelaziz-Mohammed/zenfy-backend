@@ -51,6 +51,15 @@ const adminSchema = new mongoose.Schema(
       default: () => new Date(Date.now() + 24 * 60 * 60 * 1000), // 24h from creation
       index: { expires: "0s" },
     },
+    // reset password token and expiry
+    resetPasswordToken: {
+      type: String,
+      default: null,
+    },
+    resetPasswordExpires: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true }
 );

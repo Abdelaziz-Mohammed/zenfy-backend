@@ -128,4 +128,84 @@ const register = async (req, res) => {
   }
 };
 
-module.exports = { login, register };
+const forgotPassword = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { email } = req.body;
+
+  try {
+    const admin = await Admin.findOne({ email });
+    if (!admin) {
+      return res.status(404).json({ message: "Admin with this email does not exist" });
+    }
+
+    // Generate reset token (valid for 15 minutes)
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetTokenHash = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+    admin.resetPasswordToken = resetTokenHash;
+    admin.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 minutes
+    await admin.save();
+
+    const resetLink = `${FRONTEND_URL}/reset-password?token=${resetToken}&email=${encodeURIComponent(email)}`;
+
+    await sendEmailService({
+      to: email,
+      subject: "Password Reset Request",
+      html: `
+        <h1>Reset Your Password</h1>
+        <p>Hello ${admin.name || "User"},</p>
+        <p>Click the link below to reset your password:</p>
+        <a href="${resetLink}">${resetLink}</a>
+        <p><b>Note:</b> This link will expire in 15 minutes.</p>
+      `,
+    });
+
+    res.status(200).json({ message: "Password reset email sent successfully" });
+  } catch (error) {
+    console.error("Forgot Password error: ", error.message);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { token, newPassword, email } = req.body;
+
+  try {
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    const admin = await Admin.findOne({
+      email,
+      resetPasswordToken: hashedToken,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!admin) {
+      return res.status(400).json({ message: "Invalid or expired token" });
+    }
+
+    admin.password = newPassword;
+    admin.resetPasswordToken = undefined;
+    admin.resetPasswordExpires = undefined;
+
+    await admin.save();
+
+    res.status(200).json({ message: "Password reset successful" });
+  } catch (error) {
+    console.error("Reset Password Error: ", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = { login, register, forgotPassword, resetPassword };
