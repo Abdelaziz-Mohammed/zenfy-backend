@@ -67,6 +67,24 @@ const approveRequest = async (req, res) => {
   }
 };
 
+// Reject pending admin request (super_admin only)
+const rejectRequest = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const admin = await Admin.findById(id);
+
+    if (!admin) return res.status(404).json({ message: "Admin not found" });
+    if (!admin.isPending) {
+      return res.status(400).json({ message: "Admin is not pending" });
+    }
+
+    await Admin.findByIdAndDelete(id);
+    res.json({ message: "Admin rejected successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 // List pending admins (super_admin only)
 const listPendingAdmins = async (req, res) => {
   try {
@@ -77,4 +95,4 @@ const listPendingAdmins = async (req, res) => {
   }
 };
 
-module.exports = { listAdmins, deleteAdmin, approveRequest, listPendingAdmins };
+module.exports = { listAdmins, deleteAdmin, approveRequest, rejectRequest, listPendingAdmins };
