@@ -26,7 +26,7 @@ const verifyEmail = async (req, res) => {
 
     admin.isVerified = true;
     admin.verificationToken = null;
-    admin.verificationExpiresAt = undefined; // clear the expiry field
+    admin.verificationExpiresAt = null; // clear the expiry field
     admin.isPending = true;
     await admin.save();
 
