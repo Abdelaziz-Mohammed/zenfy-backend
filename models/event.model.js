@@ -35,8 +35,10 @@ const eventSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    offer: {
-      type: String,
+    price: {
+      type: Number,
+      required: true,
+      min: 0,
     },
     imageUrl: {
       type: String,
