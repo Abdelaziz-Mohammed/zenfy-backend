@@ -30,7 +30,7 @@ const getPublishedEventById = async (req, res) => {
 // Get ALL events (published + unpublished) for admin
 const getAllEvents = async (req, res) => {
   try {
-    const events = await Event.find().sort({ createdAt: -1 });
+    const events = await Event.find().sort({ order: 1 });
     res.status(200).json(events);
   } catch (error) {
     res.status(500).json({ message: "Error fetching events", error: error.message });
@@ -102,6 +102,27 @@ const unpublishEvent = async (req, res) => {
   }
 };
 
+// Reorder events
+const reorderEvents = async (req, res) => {
+  try {
+    const { order } = req.body; // Array of event IDs in new order
+
+    if (!Array.isArray(order)) {
+      return res.status(400).json({ message: "Invalid order format" });
+    }
+
+    for (let i = 0; i < order.length; i++) {
+      await Event.findByIdAndUpdate(order[i], { order: i });
+    }
+
+    const updatedEvents = await Event.find().sort({ order: 1 });
+
+    res.status(200).json(updatedEvents);
+  } catch (error) {
+    res.status(500).json({ message: "Error reordering events", error: error.message });
+  }
+};
+
 module.exports = {
   getPublishedEvents,
   getPublishedEventById,
@@ -111,4 +132,5 @@ module.exports = {
   deleteEvent,
   publishEvent,
   unpublishEvent,
+  reorderEvents,
 };

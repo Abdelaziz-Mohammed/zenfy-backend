@@ -30,7 +30,7 @@ const getPublishedArticleById = async (req, res) => {
 // Get ALL articles (published + unpublished) for admin
 const getAllArticles = async (req, res) => {
   try {
-    const articles = await Article.find().sort({ createdAt: -1 });
+    const articles = await Article.find().sort({ order: 1 });
     res.status(200).json(articles);
   } catch (error) {
     res.status(500).json({ message: "Error fetching all articles", error: error.message });
@@ -102,6 +102,27 @@ const unpublishArticle = async (req, res) => {
   }
 };
 
+// Reorder articles
+const reorderArticles = async (req, res) => {
+  try {
+    const { order } = req.body; // Array of article IDs in new order
+
+    if (!Array.isArray(order)) {
+      return res.status(400).json({ message: "Invalid order format" });
+    }
+
+    for (let i = 0; i < order.length; i++) {
+      await Article.findByIdAndUpdate(order[i], { order: i });
+    }
+
+    const updatedArticles = await Article.find().sort({ order: 1 });
+
+    res.status(200).json(updatedArticles);
+  } catch (error) {
+    res.status(500).json({ message: "Error reordering articles", error: error.message });
+  }
+};
+
 module.exports = {
   getPublishedArticles,
   getPublishedArticleById,
@@ -111,4 +132,5 @@ module.exports = {
   deleteArticle,
   publishArticle,
   unpublishArticle,
+  reorderArticles,
 };

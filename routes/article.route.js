@@ -8,6 +8,7 @@ const {
   deleteArticle,
   publishArticle,
   unpublishArticle,
+  reorderArticles,
 } = require("../controllers/article.controller");
 const { adminMiddleware } = require("../middlewares/admin.middleware");
 const { upload } = require("./../config/cloudinary");
@@ -25,5 +26,6 @@ articleRouter.put("/:id", adminMiddleware, upload.single("image"), updateArticle
 articleRouter.delete("/:id", adminMiddleware, deleteArticle);
 articleRouter.patch("/:id/publish", adminMiddleware, publishArticle);
 articleRouter.patch("/:id/unpublish", adminMiddleware, unpublishArticle);
+articleRouter.patch("/reorder", adminMiddleware, reorderArticles);
 
 module.exports = articleRouter;

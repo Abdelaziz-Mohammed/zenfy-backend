@@ -8,6 +8,7 @@ const {
   deleteEvent,
   publishEvent,
   unpublishEvent,
+  reorderEvents,
 } = require("../controllers/event.controller");
 const { adminMiddleware } = require("../middlewares/admin.middleware");
 const { upload } = require("./../config/cloudinary");
@@ -25,5 +26,6 @@ eventRouter.put("/:id", adminMiddleware, upload.single("image"), updateEvent);
 eventRouter.delete("/:id", adminMiddleware, deleteEvent);
 eventRouter.patch("/:id/publish", adminMiddleware, publishEvent);
 eventRouter.patch("/:id/unpublish", adminMiddleware, unpublishEvent);
+eventRouter.patch("/reorder", adminMiddleware, reorderEvents);
 
 module.exports = eventRouter;
